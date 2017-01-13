@@ -5,7 +5,13 @@ body {
 p {
 	color:#33ff66;
 	font-family:Tahoma,Verdana,Arial,Helvetica,sans-serif;
-	font-size:12px;
+	font-size:14px;
+	display: inline;
+}
+
+#top img {
+	display: block;
+	margin-bottom: 20px;
 }
 
 #text_top {
@@ -15,7 +21,7 @@ p {
 
 #top {
 	position:absolute;
-	left:191px;
+	left:190px;
 	top:15px;
 	z-index:4;
 }

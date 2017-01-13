@@ -1,67 +1,113 @@
-$(document).ready(function(){
+$(document).ready(function() {
+	golightning();      
+	window.onblur = stopLightning();
+	window.onfocus = golightning();
+	var int1, int2, int3;       
 
-	var headclix = 0, eyesclix = 0, noseclix = 0, mouthclix = 0;    //各个部位变量初始值设为零，因为还没点击任何元素
+	//定义3个闪电
+	function lightning_one() {
+		$("#container #lightning1").fadeIn(250).fadeOut(250);
+	};
+	function lightning_two() {
+		$("#container #lightning2").fadeIn(250).fadeOut(250);
+	};
+	function lightning_three() {
+		$("#container #lightning3").fadeIn(250).fadeOut(250);
+	};
+	
 
-	//调用使闪电反复闪烁的定时函数
-	lightning_one(4000);
-	lightning_two(5000);
-	lightning_three(7000);
+	//为3个闪电设置不同的定时器
+	function golightning() {
+		int1 = setInterval(function() {
+			lightning_one();
+		},
+		1000
+		);
+		int2 = setInterval(function() {
+			lightning_two()
+		},
+		2000
+		);
+		int3 = setInterval(function() {
+			lightning_three()
+		},
+		3000
+		);
+	}
 
-	$("#head").click(function(){           //使#head元素可点击    
-		if(headclix < 9){                 //限制用户最多点击9次
-			$(this).animate({left:"-=367px"},500);     //每次点击#head元素时#head元素向左相对移动367px，时限指定为半秒
-			headclix += 1;               //将headclix变量设为原值加1            
-		}
-		else{
-			$(this).animate({left:"0px"},500);         //将#head元素移回到它原来的位置（left:0px），时限指定为半秒
-			headclix = 0;               //第9次点击之后重置headcilx变量为0
-		}
-	});
+	//清除3个闪电间隔的定时器
+	function stopLightning() {
+		window.clearInterval(int1);
+		window.clearInterval(int2);
+		window.clearInterval(int3);
+	}
+	
+	//4个部位分别点击的次数
+	var clix = [0, 0, 0, 0];     
 
-	$("#eyes").click(function(){
-		if(eyesclix < 9){       
-			$(this).animate({left:"-=367px"},500);
-			headclix += 1;
+	//通过点击次数移动图片
+	function moveMe(i, obj) {
+		if (clix[i] < 9) {
+			$(obj).animate({left:"-=367px"}, 500);
+			clix[i] += 1;
 		}
-		else{
-			$(this).animate({left:"0px"},500);
-			eyesclix = 0;
+		else { 
+			clix[i] = 0;
+			$(obj).animate({left:"0px"}, 500);
 		}
-	});
+	}
 
-	$("#nose").click(function(){
-		if(noseclix < 9){         
-			$(this).animate({left:"-=367px"},500);
-			noseclix = 0;
-		}
-		else{
-			$(this).animate({left:"0px"},500);
-			noseclix = 0;
-		}
-	});
+	//分别使4个部位可点击，并调用 moveMe()函数来移动图片
+	$("#head").click(function() {
+		moveMe(0, this);
+	})	
+	$("#eyes").click(function() {
+		moveMe(1, this);
+	})
+	$("#nose").click(function() {
+		moveMe(2, this);
+	})
+	$("#mouth").click(function() {
+		moveMe(3, this);
+	})
 
-	$("#mouth").click(function(){
-		if(mouthclix < 9){
-			$(this).animate({left:"-=367px"},500);
-			mouthclix += 1;
-		}
-		else{
-			$(this).animate({left:"0px"},500);
-			mouthclix = 0;
-		}
-	});
-});
+	var w = 367    
+	var m = 10;
+	function getRandom(num) {
+		var my_random_num = Math.floor(Math.random()*num);
+		return my_random_num;
+	}
 
-//用定时函数使闪电反复闪烁
-function lightning_one(t){
-	$("#container #lightning1").fadeIn(250).fadeOut(250);        //将#lightning1元素淡入淡出，时限分别为1/4秒
-	setTimeout("lightning_one()",t);          //setTimeout()方法告诉js解释器运行一个函数，另外再次运行之前先等待一段时间
-};
-function lightning_two(t){
-	$("#container #lightning2").fadeIn("fast").fadeOut("fast");
-	setTimeout("lightning_two()",t);
-};
-function lightning_three(t){
-	$("#container #lightning3").fadeIn("fast").fadeOut("fast");
-	setTimeout("lightning_three()",t);
-};
+	$("#btnRandom").click(randomize);
+
+	//随机移动目标到当前位置
+	function randomize() {
+		$(".face").each(function(index) {    
+			var target_position = getRandom(m);    
+			var current_position = clix[index];		
+			clix[index] = target_position;      
+			if (target_position > current_position) {
+				var move_to = (target_position - current_position) *w;         
+				$(this).animate({left: "-=" +move_to+ "px"},500);
+			}
+			else if (target_position < current_position) {
+				var move_to = (current_position - target_position) *w;
+				$(this).animate({left: "+=" +move_to+ "px"},500);
+			}
+			else{
+
+			}
+			
+		});
+	};
+
+	//重新开始游戏
+	$("#btnReset").click(rest);
+
+	function rest() {
+		$(".face").each(function(index) {
+			clix[index] = 0;        
+			$(this).animate({left: "0px"},500);   
+		});
+	}
+})	 
